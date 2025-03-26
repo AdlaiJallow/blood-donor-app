@@ -24,6 +24,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -79,12 +80,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    'Your journey begins here.',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white.withOpacity(0.7),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("(... And whoever saves one – it is as if he had saved mankind entirely.) \n(Quran 5:32)",
+                      textAlign: TextAlign.center, style: GoogleFonts.aBeeZee(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey.shade300),),
                   ),
                   const SizedBox(height: 40),
                   // Button or Further Navigation
