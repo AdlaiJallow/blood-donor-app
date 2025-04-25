@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'screen/welcome_screen.dart';
+// import 'screen/welcome_screen.dart';
 import 'screen/register_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'screen/login_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -13,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: RegisterPage(),
+      home: LoginPage(),
     );
   }
 }
