@@ -1,11 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+  static const String id = 'register_page';
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -13,21 +13,40 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-
+  final _auth = FirebaseAuth.instance;
+  User? loggedInUSer;
 
   String fullName = "";
   String phoneNumber = "";
-  String passWord = "";
+  String password = "";
   String confirmPassword = "";
   String bloodType = "O+";
   String countryCode = "+220";
 
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
 
   void _submitForm() {
-    if (_formKey.currentState!.validate()){
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Registration Successful!")),
-      );
+    // final newUser =
+    //     _auth.createUserWithEmailAndPassword(email: email, password: password);
+    // if (_formKey.currentState!.validate()) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text("Registration Successful!")),
+    //   );
+    // }
+  }
+
+  void getCurrentUser() {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        loggedInUSer = user;
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -38,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Form(
               key: _formKey,
               child: Column(
@@ -53,61 +72,64 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   // Full Name Field
-                  _buildTextField("Full Name", Icons.person, false, (value){
-                    if (value == null || value.isEmpty){
+                  _buildTextField("Full Name", Icons.person, false, (value) {
+                    if (value == null || value.isEmpty) {
                       return 'Please enter your full name';
                     }
                     return null;
                   }),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
 
                   // Phone Number Field
                   // _buildTextField("Phone Number", Icons.phone, false, keyboardType: TextInputType.phone),
                   _buildPhoneField(),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
 
                   // Blood Type Dropdown
                   _buildDropdown(),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
 
-                  // Password Field
-                  _buildTextField("Password", Icons.lock, true, (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter a password";
-                    } else if (value.length < 7) {
-                      return "Password should be at least 7 characters";
-                    }
-                    return null;
-                  }),
-                  SizedBox(height: 15),
+                  // // Password Field
+                  // _buildTextField("Password", Icons.lock, true, (value) {
+                  //   if (value == null || value.isEmpty) {
+                  //     return "Please enter a password";
+                  //   } else if (value.length < 7) {
+                  //     return "Password should be at least 7 characters";
+                  //   }
+                  //   return null;
+                  // }),
+                  // const SizedBox(height: 15),
 
-                  // Confirm Password Field
-                  _buildTextField("Confirm Password", Icons.lock, true, (value) {
-                    if (value == null || value.isEmpty){
-                      return "Please confirm your password";
-                    } else if (value != passWord){
-                      return "Passwords do not match";
-                    }
-                    return null;
-                  }),
-                  SizedBox(height: 25),
+                  // // Confirm Password Field
+                  // _buildTextField("Confirm Password", Icons.lock, true,
+                  //     (value) {
+                  //   if (value == null || value.isEmpty) {
+                  //     return "Please confirm your password";
+                  //   } else if (value != password) {
+                  //     return "Passwords do not match";
+                  //   }
+                  //   return null;
+                  // }),
+                  const SizedBox(height: 25),
 
                   // Register Button
                   ElevatedButton(
-                    onPressed: _submitForm,
+                    onPressed: null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.red,
-                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      textStyle: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    child: Text("Register"),
+                    child: const Text("Register"),
                   ),
                 ],
               ),
@@ -119,7 +141,9 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   // Reusable TextField Widget
-  Widget _buildTextField(String label, IconData icon, bool isPassword, String? Function(String?) validator, {TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildTextField(String label, IconData icon, bool isPassword,
+      String? Function(String?) validator,
+      {TextInputType keyboardType = TextInputType.text}) {
     return TextFormField(
       obscureText: isPassword,
       keyboardType: keyboardType,
@@ -137,11 +161,10 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _buildPhoneField() {
     return IntlPhoneField(
       decoration: InputDecoration(
-        labelText: "Phone Number",
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        filled: true,
-        fillColor: Colors.white
-      ),
+          labelText: "Phone Number",
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          filled: true,
+          fillColor: Colors.white),
       initialCountryCode: "GM",
       onChanged: (phone) {
         setState(() {
@@ -156,7 +179,6 @@ class _RegisterPageState extends State<RegisterPage> {
         return null;
       },
     );
-
   }
 
   // Blood Type Dropdown
@@ -164,7 +186,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: "Select Blood Type",
-        prefixIcon: Icon(Icons.bloodtype, color: Colors.red),
+        prefixIcon: const Icon(Icons.bloodtype, color: Colors.red),
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
