@@ -33,14 +33,6 @@ class _SignUpState extends State<SignUp> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  // const SizedBox(height: 20),
-                  // Hero(
-                  //   tag: 'logo',
-                  //   child: SizedBox(
-                  //     height: 120.0,
-                  //     child: Image.asset('images/logo.png'),
-                  //   ),
-                  // ),
                   const SizedBox(height: 20),
                   Text(
                     "Create an Account",

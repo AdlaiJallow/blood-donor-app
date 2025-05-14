@@ -44,12 +44,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo or Text
-                  // const CircleAvatar(
-                  //   radius: 50,
-                  //   backgroundImage:
-                  //       AssetImage('assets/welcomepage.jpg'), // Optional logo
-                  // ),
+                  const CircleAvatar(
+                    radius: 50,
+                    backgroundImage:
+                        AssetImage('assets/welcomepage.jpg'), // Optional logo
+                  ),
                   const SizedBox(height: 20),
                   const Text(
                     "Let's donate blood to save lives",
@@ -72,7 +71,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           color: Colors.grey.shade300),
                     ),
                   ),
-
                   const SizedBox(height: 10),
                   RoundedButton(
                     color: Colors.red,
