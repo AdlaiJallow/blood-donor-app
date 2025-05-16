@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'screen/login_page.dart';
 import 'screen/profile_page.dart';
 import 'screen/register_page.dart';
-import 'screen/sign_up.dart';
+// import 'screen/sign_up.dart';
 import 'screen/welcome_screen.dart';
 
 void main() async {
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         WelcomeScreen.id: (context) => const WelcomeScreen(),
         LoginPage.id: (context) => const LoginPage(),
         RegisterPage.id: (context) => const RegisterPage(),
-        SignUp.id: (context) => const SignUp(),
+        // SignUp.id: (context) => const SignUp(),
         ProfilePage.id: (context) => const ProfilePage()
       },
     );

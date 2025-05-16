@@ -1,8 +1,9 @@
 import 'package:blood_donor_app/screen/login_page.dart';
-import 'package:blood_donor_app/screen/sign_up.dart';
+// import 'package:blood_donor_app/screen/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:blood_donor_app/components/rounded_button.dart';
+import 'package:blood_donor_app/screen/register_page.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'welcome_screen';
@@ -76,7 +77,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     color: Colors.red,
                     title: 'Register',
                     onPressed: () {
-                      Navigator.pushNamed(context, SignUp.id);
+                      Navigator.pushNamed(context, RegisterPage.id);
                     },
                   ),
                   const SizedBox(height: 7),
