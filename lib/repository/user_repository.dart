@@ -10,7 +10,7 @@ class UserRepository extends GetxController {
 
   Future<void> createUser(UserModel user) async {
     await _db
-        .collection("Users")
+        .collection("users")
         .doc(user.id)
         .set(user.toJson())
         .whenComplete(() => Get.snackbar(

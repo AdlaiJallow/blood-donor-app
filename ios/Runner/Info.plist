@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to photo library to select profile picture</string>
 	<key>CFBundleDisplayName</key>
 	<string>Blood Donor App</string>
 	<key>CFBundleExecutable</key>

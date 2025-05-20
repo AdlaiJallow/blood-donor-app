@@ -1,5 +1,6 @@
 import 'package:blood_donor_app/models/user_model.dart';
 import 'package:blood_donor_app/repository/user_repository.dart';
+import 'package:blood_donor_app/screen/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,7 +34,6 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => isLoading = true);
 
     try {
-      // 1. Firebase Authentication
       final UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -43,7 +43,6 @@ class _RegisterPageState extends State<RegisterPage> {
       final User? user = userCredential.user;
 
       if (user != null) {
-        // 2. Save user data to Firestore
         final userModel = UserModel(
           id: user.uid,
           name: _fullNameController.text.trim(),
@@ -59,8 +58,7 @@ class _RegisterPageState extends State<RegisterPage> {
           const SnackBar(content: Text("Registration successful!")),
         );
 
-        // Optional: Navigate to home/dashboard
-        // Navigator.pushReplacementNamed(context, HomeScreen.id);
+        Navigator.pushReplacementNamed(context, ProfilePage.id);
       }
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -87,60 +85,146 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red.shade300,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Create Account",
-                    style: GoogleFonts.abel(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 26,
-                      color: Colors.white,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.red.shade400, Colors.red.shade700],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              child: Card(
+                elevation: 8,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Logo or Icon
+                        Icon(
+                          Icons.volunteer_activism,
+                          size: 60,
+                          color: Colors.red.shade700,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Join Blood Donor",
+                          style: GoogleFonts.abel(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                            color: Colors.red.shade700,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildTextField(
+                          label: "Full Name",
+                          icon: Icons.person,
+                          controller: _fullNameController,
+                          textCapitalization: TextCapitalization.words,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your full name';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        _buildTextField(
+                          label: "Email",
+                          icon: Icons.email,
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          textCapitalization: TextCapitalization.none,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            }
+                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                .hasMatch(value)) {
+                              return 'Please enter a valid email';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        _buildTextField(
+                          label: "Password",
+                          icon: Icons.lock,
+                          controller: _passwordController,
+                          isPassword: true,
+                          textCapitalization: TextCapitalization.none,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            if (value.length < 6) {
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        _buildPhoneField(),
+                        const SizedBox(height: 16),
+                        _buildTextField(
+                          label: "Location",
+                          icon: Icons.location_city,
+                          controller: _locationController,
+                          textCapitalization: TextCapitalization.words,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your location';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        _buildDropdown(),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: isLoading ? null : registerUser,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red.shade600,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 40,
+                              vertical: 14,
+                            ),
+                            elevation: 5,
+                            shadowColor: Colors.black.withOpacity(0.3),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            textStyle: GoogleFonts.abel(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          child: isLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text("Register"),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  _buildTextField("Full Name", Icons.person,
-                      controller: _fullNameController),
-                  const SizedBox(height: 15),
-                  _buildTextField("Email", Icons.email,
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress),
-                  const SizedBox(height: 15),
-                  _buildTextField("Password", Icons.lock,
-                      controller: _passwordController, isPassword: true),
-                  const SizedBox(height: 15),
-                  _buildPhoneField(),
-                  const SizedBox(height: 15),
-                  _buildTextField("Location", Icons.location_city_outlined,
-                      controller: _locationController),
-                  const SizedBox(height: 15),
-                  _buildDropdown(),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: isLoading ? null : registerUser,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 50, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      textStyle: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    child: isLoading
-                        ? const CircularProgressIndicator(color: Colors.red)
-                        : const Text("Register"),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -149,27 +233,43 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _buildTextField(String label, IconData icon,
-      {required TextEditingController controller,
-      bool isPassword = false,
-      TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildTextField({
+    required String label,
+    required IconData icon,
+    required TextEditingController controller,
+    bool isPassword = false,
+    TextInputType keyboardType = TextInputType.text,
+    TextCapitalization textCapitalization = TextCapitalization.none,
+    String? Function(String?)? validator,
+  }) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
       keyboardType: keyboardType,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter $label';
-        }
-        return null;
-      },
+      textCapitalization: textCapitalization,
+      validator: validator,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: Colors.red),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        labelStyle: GoogleFonts.abel(color: Colors.grey.shade700),
+        prefixIcon: Icon(icon, color: Colors.red.shade600),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.red.shade600, width: 2),
+        ),
         filled: true,
         fillColor: Colors.white,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       ),
+      style: GoogleFonts.abel(fontSize: 16),
     );
   }
 
@@ -177,9 +277,23 @@ class _RegisterPageState extends State<RegisterPage> {
     return IntlPhoneField(
       decoration: InputDecoration(
         labelText: "Phone Number",
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        labelStyle: GoogleFonts.abel(color: Colors.grey.shade700),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.red.shade600, width: 2),
+        ),
         filled: true,
         fillColor: Colors.white,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       ),
       initialCountryCode: "GM",
       onChanged: (phone) {
@@ -188,6 +302,13 @@ class _RegisterPageState extends State<RegisterPage> {
           countryCode = phone.countryCode;
         });
       },
+      validator: (phone) {
+        if (phone == null || phone.completeNumber.isEmpty) {
+          return 'Please enter a valid phone number';
+        }
+        return null;
+      },
+      style: GoogleFonts.abel(fontSize: 16),
     );
   }
 
@@ -195,551 +316,38 @@ class _RegisterPageState extends State<RegisterPage> {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: "Select Blood Type",
-        prefixIcon: const Icon(Icons.bloodtype, color: Colors.red),
+        labelStyle: GoogleFonts.abel(color: Colors.grey.shade700),
+        prefixIcon: Icon(Icons.bloodtype, color: Colors.red.shade600),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.red.shade600, width: 2),
+        ),
         filled: true,
         fillColor: Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       ),
       value: bloodType,
       items: ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"]
-          .map((type) => DropdownMenuItem(value: type, child: Text(type)))
+          .map((type) => DropdownMenuItem(
+              value: type, child: Text(type, style: GoogleFonts.abel())))
           .toList(),
       onChanged: (value) => setState(() => bloodType = value!),
+      style: GoogleFonts.abel(fontSize: 16, color: Colors.black),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please select a blood type';
+        }
+        return null;
+      },
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import 'package:blood_donor_app/models/user_model.dart';
-// import 'package:blood_donor_app/repository/user_repository.dart';
-// import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:intl_phone_field/intl_phone_field.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-
-// class RegisterPage extends StatefulWidget {
-//   const RegisterPage({super.key});
-//   static const String id = 'register_page';
-
-//   @override
-//   State<RegisterPage> createState() => _RegisterPageState();
-// }
-
-// class _RegisterPageState extends State<RegisterPage> {
-//   final _auth = FirebaseAuth.instance;
-//   User? loggedInUser;
-
-//   final TextEditingController _fullNameController = TextEditingController();
-//   final TextEditingController _locationController = TextEditingController();
-
-//   String email = '';
-//   String phoneNumber = "";
-//   String bloodType = "O+";
-//   String countryCode = "+220";
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     getCurrentUser();
-//   }
-
-//   @override
-//   void dispose() {
-//     _fullNameController.dispose();
-//     _locationController.dispose();
-//     super.dispose();
-//   }
-
-//   void _saveUser() {
-//     final userId = FirebaseAuth.instance.currentUser?.uid;
-
-//     if (userId == null) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text("User not authenticated")),
-//       );
-//       return;
-//     }
-
-//     final user = UserModel(
-//         id: userId,
-//         name: _fullNameController.text.trim(),
-//         email: email,
-//         location: _locationController.text.trim(),
-//         phoneNumber: phoneNumber,
-//         bloodType: bloodType);
-
-//     UserRepository.instance.createUser(user);
-//   }
-
-//   void getCurrentUser() {
-//     try {
-//       final user = _auth.currentUser;
-//       if (user != null) {
-//         loggedInUser = user;
-//       }
-//     } catch (e) {
-//       print(e);
-//     }
-//   }
-
-//   void handleRegister() {
-//     final name = _fullNameController.text.trim();
-//     final location = _locationController.text.trim();
-
-//     if (name.isEmpty || location.isEmpty || phoneNumber.isEmpty) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text("Please fill all fields")),
-//       );
-//       return;
-//     }
-
-//     // Proceed with registration logic here
-//     print("Full Name: $name");
-//     print("Location: $location");
-//     print("Phone: $phoneNumber");
-//     print("Blood Type: $bloodType");
-
-//     _saveUser();
-
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       const SnackBar(content: Text("Registered Successfully")),
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.red.shade300,
-//       body: SafeArea(
-//         child: Center(
-//           child: SingleChildScrollView(
-//             padding: const EdgeInsets.all(16.0),
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.center,
-//               children: [
-//                 Text(
-//                   "Enter Your Details",
-//                   style: GoogleFonts.abel(
-//                     fontWeight: FontWeight.bold,
-//                     fontSize: 26,
-//                     color: Colors.white,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 20),
-//                 _buildTextField("Full Name", Icons.person, _fullNameController),
-//                 const SizedBox(height: 15),
-//                 _buildPhoneField(),
-//                 const SizedBox(height: 15),
-//                 _buildTextField("Location", Icons.location_city_outlined,
-//                     _locationController),
-//                 const SizedBox(height: 15),
-//                 _buildDropdown(),
-//                 const SizedBox(height: 15),
-//                 ElevatedButton(
-//                   onPressed: handleRegister,
-//                   style: ElevatedButton.styleFrom(
-//                     backgroundColor: Colors.white,
-//                     foregroundColor: Colors.red,
-//                     padding: const EdgeInsets.symmetric(
-//                         horizontal: 50, vertical: 12),
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(10),
-//                     ),
-//                     textStyle: const TextStyle(
-//                         fontSize: 18, fontWeight: FontWeight.bold),
-//                   ),
-//                   child: const Text("Register"),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildTextField(
-//       String label, IconData icon, TextEditingController controller) {
-//     return TextField(
-//       controller: controller,
-//       decoration: InputDecoration(
-//         labelText: label,
-//         prefixIcon: Icon(icon, color: Colors.red),
-//         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-//         filled: true,
-//         fillColor: Colors.white,
-//       ),
-//     );
-//   }
-
-//   Widget _buildPhoneField() {
-//     return IntlPhoneField(
-//       decoration: InputDecoration(
-//         labelText: "Phone Number",
-//         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-//         filled: true,
-//         fillColor: Colors.white,
-//       ),
-//       initialCountryCode: "GM",
-//       onChanged: (phone) {
-//         setState(() {
-//           phoneNumber = phone.completeNumber;
-//           countryCode = phone.countryCode;
-//         });
-//       },
-//     );
-//   }
-
-//   Widget _buildDropdown() {
-//     return DropdownButtonFormField<String>(
-//       decoration: InputDecoration(
-//         labelText: "Select Blood Type",
-//         prefixIcon: const Icon(Icons.bloodtype, color: Colors.red),
-//         filled: true,
-//         fillColor: Colors.white,
-//         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-//       ),
-//       value: bloodType,
-//       items: ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"]
-//           .map((type) => DropdownMenuItem(value: type, child: Text(type)))
-//           .toList(),
-//       onChanged: (value) => setState(() => bloodType = value!),
-//     );
-//   }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // import 'package:flutter/material.dart';
-// // import 'package:google_fonts/google_fonts.dart';
-// // import 'package:intl_phone_field/intl_phone_field.dart';
-// // import 'package:firebase_auth/firebase_auth.dart';
-
-// // class RegisterPage extends StatefulWidget {
-// //   const RegisterPage({super.key});
-// //   static const String id = 'register_page';
-
-// //   @override
-// //   State<RegisterPage> createState() => _RegisterPageState();
-// // }
-
-// // class _RegisterPageState extends State<RegisterPage> {
-// //   final _formKey = GlobalKey<FormState>();
-// //   final _auth = FirebaseAuth.instance;
-// //   User? loggedInUSer;
-
-// //   String fullName = "";
-// //   String phoneNumber = "";
-// //   String password = "";
-// //   String confirmPassword = "";
-// //   String bloodType = "O+";
-// //   String countryCode = "+220";
-
-// //   @override
-// //   void initState() {
-// //     super.initState();
-// //     getCurrentUser();
-// //   }
-
-// //   void dispose() {}
-
-// //   void getCurrentUser() {
-// //     try {
-// //       final user = _auth.currentUser;
-// //       if (user != null) {
-// //         loggedInUSer = user;
-// //       }
-// //     } catch (e) {
-// //       print(e);
-// //     }
-// //   }
-
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return Scaffold(
-// //       backgroundColor: Colors.red.shade300,
-// //       body: SafeArea(
-// //         child: Center(
-// //           child: SingleChildScrollView(
-// //             padding: const EdgeInsets.all(16.0),
-// //             child: Form(
-// //               key: _formKey,
-// //               child: Column(
-// //                 crossAxisAlignment: CrossAxisAlignment.center,
-// //                 children: [
-// //                   // Title
-// //                   Text(
-// //                     "Enter Your Details",
-// //                     style: GoogleFonts.abel(
-// //                       fontWeight: FontWeight.bold,
-// //                       fontSize: 26,
-// //                       color: Colors.white,
-// //                     ),
-// //                   ),
-// //                   const SizedBox(height: 20),
-
-// //                   // Full Name Field
-// //                   _buildTextField("Full Name", Icons.person, false, (value) {
-// //                     if (value == null || value.isEmpty) {
-// //                       return 'Please enter your full name';
-// //                     }
-// //                     return null;
-// //                   }),
-// //                   const SizedBox(height: 15),
-
-// //                   _buildPhoneField(),
-// //                   const SizedBox(height: 15),
-// //                   _buildTextField(
-// //                       "Location", Icons.location_city_outlined, false, (value) {
-// //                     if (value == null || value.isEmpty) {
-// //                       return 'Please enter your location';
-// //                     }
-// //                   }),
-
-// //                   const SizedBox(height: 15),
-
-// //                   // Blood Type Dropdown
-// //                   _buildDropdown(),
-// //                   const SizedBox(height: 15),
-
-// //                   // Register Button
-// //                   ElevatedButton(
-// //                     onPressed: null,
-// //                     style: ElevatedButton.styleFrom(
-// //                       backgroundColor: Colors.white,
-// //                       foregroundColor: Colors.red,
-// //                       padding: const EdgeInsets.symmetric(
-// //                           horizontal: 50, vertical: 12),
-// //                       shape: RoundedRectangleBorder(
-// //                         borderRadius: BorderRadius.circular(10),
-// //                       ),
-// //                       textStyle: const TextStyle(
-// //                           fontSize: 18, fontWeight: FontWeight.bold),
-// //                     ),
-// //                     child: const Text("Register"),
-// //                   ),
-// //                 ],
-// //               ),
-// //             ),
-// //           ),
-// //         ),
-// //       ),
-// //     );
-// //   }
-
-// //   // Reusable TextField Widget
-// //   Widget _buildTextField(String label, IconData icon, bool isPassword,
-// //       String? Function(String?) validator,
-// //       {TextInputType keyboardType = TextInputType.text}) {
-// //     return TextFormField(
-// //       obscureText: isPassword,
-// //       keyboardType: keyboardType,
-// //       decoration: InputDecoration(
-// //         labelText: label,
-// //         prefixIcon: Icon(icon, color: Colors.red),
-// //         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-// //         filled: true,
-// //         fillColor: Colors.white,
-// //       ),
-// //       validator: validator,
-// //     );
-// //   }
-
-// //   Widget _buildPhoneField() {
-// //     return IntlPhoneField(
-// //       decoration: InputDecoration(
-// //           labelText: "Phone Number",
-// //           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-// //           filled: true,
-// //           fillColor: Colors.white),
-// //       initialCountryCode: "GM",
-// //       onChanged: (phone) {
-// //         setState(() {
-// //           phoneNumber = phone.completeNumber;
-// //           countryCode = phone.countryCode;
-// //         });
-// //       },
-// //       validator: (value) {
-// //         if (value == null || value.completeNumber.isEmpty) {
-// //           return "Please enter a valid phone number";
-// //         }
-// //         return null;
-// //       },
-// //     );
-// //   }
-
-// //   // Blood Type Dropdown
-// //   Widget _buildDropdown() {
-// //     return DropdownButtonFormField<String>(
-// //       decoration: InputDecoration(
-// //         labelText: "Select Blood Type",
-// //         prefixIcon: const Icon(Icons.bloodtype, color: Colors.red),
-// //         filled: true,
-// //         fillColor: Colors.white,
-// //         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-// //       ),
-// //       value: bloodType,
-// //       items: ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"]
-// //           .map((type) => DropdownMenuItem(value: type, child: Text(type)))
-// //           .toList(),
-// //       onChanged: (value) => setState(() => bloodType = value!),
-// //     );
-// //   }
-// // }
