@@ -1,4 +1,5 @@
 import 'package:blood_donor_app/repository/user_repository.dart';
+import 'package:blood_donor_app/screen/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,14 +25,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: WelcomeScreen.id,
-      routes: {
-        WelcomeScreen.id: (context) => const WelcomeScreen(),
-        LoginPage.id: (context) => const LoginPage(),
-        RegisterPage.id: (context) => const RegisterPage(),
-        // SignUp.id: (context) => const SignUp(),
-        ProfilePage.id: (context) => const ProfilePage()
-      },
+      initialRoute: '/welcome_screen',
+      getPages: [
+        GetPage(name: '/welcome_screen', page: () => const WelcomeScreen()),
+        GetPage(name: '/register_page', page: () => const RegisterPage()),
+        GetPage(name: '/login_screen', page: () => const LoginPage()),
+        GetPage(name: '/profile_page', page: () => const ProfilePage()),
+        GetPage(name: '/home_screen', page: () => const HomePage())
+      ],
+      unknownRoute: GetPage(
+          name: '/notfound',
+          page: () => const Scaffold(
+                body: Center(
+                  child: Text('Route not found'),
+                ),
+              )),
     );
   }
 }

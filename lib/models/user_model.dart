@@ -1,6 +1,6 @@
 class UserModel {
   final String? id;
-  // final String imagePath;
+  final String imagePath;
   final String name;
   final String email;
   final String location;
@@ -9,7 +9,7 @@ class UserModel {
 
   UserModel(
       {this.id,
-      // required this.imagePath,
+      required this.imagePath,
       required this.name,
       required this.email,
       required this.location,
@@ -19,6 +19,7 @@ class UserModel {
   Map<String, dynamic> toJson() {
     return {
       "id": id,
+      "imagePath": imagePath,
       "name": name,
       "email": email,
       "location": location,
@@ -33,6 +34,7 @@ class UserModel {
         email: json["email"] ?? "",
         location: json["location"] ?? "",
         phoneNumber: json["phoneNumber"] ?? "",
-        bloodType: json["bloodType"] ?? "");
+        bloodType: json["bloodType"] ?? "",
+        imagePath: json['imagePath'] ?? "");
   }
 }

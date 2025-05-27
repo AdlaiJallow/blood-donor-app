@@ -8,7 +8,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
-  static const String id = 'register_page';
+  static const String id = '/register_page';
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -27,6 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String bloodType = "O+";
   String countryCode = "+220";
   bool isLoading = false;
+  String imagePath = "";
 
   void registerUser() async {
     if (!_formKey.currentState!.validate()) return;
@@ -44,13 +45,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
       if (user != null) {
         final userModel = UserModel(
-          id: user.uid,
-          name: _fullNameController.text.trim(),
-          email: _emailController.text.trim(),
-          location: _locationController.text.trim(),
-          phoneNumber: phoneNumber,
-          bloodType: bloodType,
-        );
+            id: user.uid,
+            name: _fullNameController.text.trim(),
+            email: _emailController.text.trim(),
+            location: _locationController.text.trim(),
+            phoneNumber: phoneNumber,
+            bloodType: bloodType,
+            imagePath: imagePath);
 
         await UserRepository.instance.createUser(userModel);
 

@@ -1,16 +1,20 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'package:blood_donor_app/models/user_model.dart';
-import 'package:blood_donor_app/screen/login_page.dart';
+// import 'package:blood_donor_app/screen/login_page.dart';
+import 'package:blood_donor_app/screen/welcome_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
-  static const String id = 'profile_page';
+  static const String id = '/profile_page';
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -73,10 +77,14 @@ class _ProfilePageState extends State<ProfilePage>
   Future<void> _logout() async {
     try {
       await FirebaseAuth.instance.signOut();
-      Navigator.pushReplacementNamed(context, LoginPage.id);
+      if (!context.mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Logged out successfully')),
       );
+
+      // Navigator.pushReplacementNamed(context, LoginPage.id);
+      Get.offAllNamed(WelcomeScreen.id);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error logging out: $e')),
@@ -86,7 +94,7 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final user = FirebaseAuth.instance.currentUser;
 

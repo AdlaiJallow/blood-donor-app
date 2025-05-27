@@ -1,3 +1,4 @@
+import 'package:blood_donor_app/screen/home_page.dart';
 import 'package:blood_donor_app/screen/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +7,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:blood_donor_app/screen/profile_page.dart';
 
 class LoginPage extends StatefulWidget {
-  static const String id = 'login_screen';
+  static const String id = '/login_screen';
 
   const LoginPage({super.key});
 
@@ -54,7 +55,7 @@ class _LoginPageState extends State<LoginPage>
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      Navigator.pushNamed(context, ProfilePage.id);
+      Navigator.pushNamed(context, HomePage.id);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? 'Login failed')),
