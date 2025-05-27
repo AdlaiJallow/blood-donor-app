@@ -1,10 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:blood_donor_app/screen/home_page.dart';
 import 'package:blood_donor_app/screen/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
-import 'package:blood_donor_app/screen/profile_page.dart';
+// import 'package:blood_donor_app/screen/profile_page.dart';
 
 class LoginPage extends StatefulWidget {
   static const String id = '/login_screen';
@@ -12,6 +14,7 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
 }
 

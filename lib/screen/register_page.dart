@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:blood_donor_app/models/user_model.dart';
 import 'package:blood_donor_app/repository/user_repository.dart';
 import 'package:blood_donor_app/screen/profile_page.dart';
